@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - UJENZI 25</title>
+  <meta name="theme-color" content="#ea6d32">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background: linear-gradient(135deg, #fef7f0 0%, #fef3ec 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      text-align: center;
+      max-width: 400px;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #ea6d32 0%, #c85728 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      color: white;
+      font-weight: bold;
+      font-size: 28px;
+    }
+    h1 { color: #1f2937; margin: 0 0 12px; font-size: 28px; }
+    p { color: #6b7280; margin: 0 0 24px; line-height: 1.6; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: #ea6d32;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #c85728; }
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+    .btn.loading .spinner { display: block; }
+    .btn.loading span { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .features {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid #fbd8c7;
+    }
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    .feature svg { color: #ea6d32; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">U25</div>
+    <h1>You're Offline</h1>
+    <p>It looks like you've lost your internet connection. Some features may not be available right now.</p>
+    <button class="btn" onclick="window.location.reload()" id="retryBtn">
+      <svg class="spinner" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none"/></svg>
+      <span>Try Again</span>
+    </button>
+
+    <div class="features">
+      <div class="feature">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Cached pages still work offline
+      </div>
+      <div class="feature">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+        Your data is saved locally
+      </div>
+      <div class="feature">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Auto-sync when back online
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('retryBtn');
+    let isRetrying = false;
+
+    btn.addEventListener('click', async () => {
+      if (isRetrying) return;
+      isRetrying = true;
+      btn.classList.add('loading');
+
+      try {
+        await fetch('/', { method: 'HEAD', cache: 'no-cache' });
+        window.location.reload();
+      } catch {
+        btn.classList.remove('loading');
+        btn.querySelector('span').textContent = 'Still Offline - Retry';
+        isRetrying = false;
+      }
+    });
+
+    // Auto-retry when connection restored
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+
+    // Check connection every 10 seconds
+    setInterval(async () => {
+      if (isRetrying) return;
+      try {
+        await fetch('/', { method: 'HEAD', cache: 'no-cache' });
+        window.location.reload();
+      } catch {}
+    }, 10000);
+  </script>
+</body>
+</html>

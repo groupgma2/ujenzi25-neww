@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' ws: wss:;">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ea6d32" />
+    <meta name="description" content="UJENZI 25 - Tanzania's leading digital platform for construction, real estate & hospitality services. Consultation, Construction, Real Estate, Rental Housing, Hotels & Airbnb." />
+    <meta name="keywords" content="UJENZI 25, construction Tanzania, architectural drawings, building materials, real estate Tanzania, rental housing, hotels Airbnb Tanzania, property development" />
+    <meta name="author" content="UJENZI 25" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="language" content="English, Swahili" />
+    <meta name="geo.region" content="TZ" />
+    <meta name="geo.placename" content="Tanzania" />
+    <meta name="application-name" content="UJENZI 25" />
+
+    <!-- Favicon Links -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="UJENZI 25" />
+    <meta property="og:title" content="UJENZI 25 - Construction, Real Estate & Hospitality Platform" />
+    <meta property="og:description" content="Tanzania's leading digital platform for construction, real estate & hospitality services." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ujenzi25.com/" />
+    <meta property="og:image" content="https://ujenzi25.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="sw_TZ" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@ujenzi25" />
+    <meta name="twitter:title" content="UJENZI 25 - Construction, Real Estate & Hospitality Platform" />
+    <meta name="twitter:description" content="Tanzania's leading digital platform for construction, real estate & hospitality services." />
+    <meta name="twitter:image" content="https://ujenzi25.com/og-image.jpg" />
+
+    <!-- Apple PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="UJENZI 25" />
+
+    <!-- Microsoft PWA -->
+    <meta name="msapplication-TileColor" content="#ea6d32" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+
+    <!-- Critical CSS Inline -->
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+      .loading { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #fef7f0 0%, #fef3ec 100%); }
+      .spinner { width: 48px; height: 48px; border: 4px solid #f3f4f6; border-top: 4px solid #e97547; border-radius: 50%; animation: spin 1s linear infinite; }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+
+    <title>UJENZI 25 - Construction, Real Estate & Hospitality Platform</title>
+  </head>
+  <body>
+    <div id="root">
+      <div class="loading">
+        <div class="spinner" role="status" aria-label="Loading UJENZI 25..."></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+
+
+  </body>
+</html>

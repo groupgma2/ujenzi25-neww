@@ -1,0 +1,54 @@
+{
+  "name": "UJENZI 25",
+  "short_name": "UJENZI 25",
+  "description": "Tanzania's leading digital platform for construction, real estate & hospitality services",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fef7f0",
+  "theme_color": "#ea6d32",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Request Consultation",
+      "short_name": "Consultation",
+      "description": "Request architectural or engineering consultation",
+      "url": "/consultation/request",
+      "icons": [{ "src": "/icons/shortcut-consultation.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Browse Properties",
+      "short_name": "Properties",
+      "description": "Browse verified property listings",
+      "url": "/real-estate/listings",
+      "icons": [{ "src": "/icons/shortcut-properties.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Find Rentals",
+      "short_name": "Rentals",
+      "description": "Find long-term rental housing",
+      "url": "/rental/listings",
+      "icons": [{ "src": "/icons/shortcut-rentals.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Book Stay",
+      "short_name": "Hotels",
+      "description": "Book hotels and Airbnb stays",
+      "url": "/hotels/listings",
+      "icons": [{ "src": "/icons/shortcut-hotels.png", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
