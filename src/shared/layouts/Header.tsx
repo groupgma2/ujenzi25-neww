@@ -96,8 +96,8 @@ export const Header = () => {
         <div className="flex h-20 items-center justify-between">
           {/* Logo */}
           <Link to={ROUTES.HOME} className="flex items-center gap-3" aria-label={t('common.appName')}>
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-              <span className="text-white font-bold text-xl">U25</span>
+            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center overflow-hidden shadow-sm ring-2 ring-white/60">
+              <img src="/assets/u25-logo.png" alt="Ujenzi 25" className="h-10 w-auto object-contain" />
             </div>
             <span className="font-bold text-2xl text-text hidden sm:block">{t('common.appName')}</span>
           </Link>

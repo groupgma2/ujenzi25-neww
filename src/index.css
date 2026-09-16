@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@theme {
+:root {
   --color-primary: #ea6d32;
   --color-primary-light: #f38d5a;
   --color-primary-dark: #c85728;

@@ -130,7 +130,7 @@ export default defineConfig({
       '/api': 'http://localhost:4000',
     },
     headers: {
-      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' ws: wss:;",
+      'Content-Security-Policy': "default-src 'self' https:; script-src 'self' 'unsafe-eval' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' http://localhost:4000 http://localhost:3000 https://*.supabase.co https: ws: wss;",
     },
   },
   build: {

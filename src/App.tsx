@@ -8,11 +8,19 @@ const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m
 const LoginPage = lazy(() => import('./features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage })));
 const RegisterPage = lazy(() => import('./features/auth/pages/RegisterPage').then((m) => ({ default: m.RegisterPage })));
 const ConsultationPage = lazy(() => import('./features/consultation/pages/ConsultationPage').then((m) => ({ default: m.ConsultationPage })));
+const ConsultationRequestPage = lazy(() => import('./features/consultation/pages/ConsultationRequestPage').then((m) => ({ default: m.ConsultationRequestPage })));
+
 const ConstructionPage = lazy(() => import('./features/construction/pages/ConstructionPage').then((m) => ({ default: m.ConstructionPage })));
 const RealEstatePage = lazy(() => import('./features/real-estate/pages/RealEstatePage').then((m) => ({ default: m.RealEstatePage })));
+const RealEstateDetailPage = lazy(() => import('./features/real-estate/pages/RealEstateDetailPage').then((m) => ({ default: m.RealEstateDetailPage })));
+const RentalDetailPage = lazy(() => import('./features/rental/pages/RentalDetailPage').then((m) => ({ default: m.RentalDetailPage })));
+const HotelDetailPage = lazy(() => import('./features/hotels/pages/HotelDetailPage').then((m) => ({ default: m.HotelDetailPage })));
+
 const RentalPage = lazy(() => import('./features/rental/pages/RentalPage').then((m) => ({ default: m.RentalPage })));
 const HotelsPage = lazy(() => import('./features/hotels/pages/HotelsPage').then((m) => ({ default: m.HotelsPage })));
 const PortfolioPage = lazy(() => import('./features/portfolio/pages/PortfolioPage').then((m) => ({ default: m.PortfolioPage })));
+const SampleDetailPage = lazy(() => import('./features/portfolio/pages/SampleDetailPage').then((m) => ({ default: m.SampleDetailPage })));
+
 const BlogPage = lazy(() => import('./features/blog/pages/BlogPage').then((m) => ({ default: m.BlogPage })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then((m) => ({ default: m.AboutPage })));
 const ContactPage = lazy(() => import('./pages/ContactPage').then((m) => ({ default: m.ContactPage })));
@@ -61,7 +69,7 @@ const AppRoutes = () => {
       <Route path={ROUTES.RESET_PASSWORD} element={<LoginPage />} />
       <Route path={ROUTES.VERIFY_EMAIL} element={<LoginPage />} />
       <Route path={ROUTES.CONSULTATION} element={<ConsultationPage />} />
-      <Route path={ROUTES.CONSULTATION_REQUEST} element={<ConsultationPage />} />
+      <Route path={ROUTES.CONSULTATION_REQUEST} element={<ConsultationRequestPage />} />
       <Route path={ROUTES.CONSULTATION_MY_REQUESTS} element={<ConsultationPage />} />
       <Route path={ROUTES.CONSULTATION_DETAIL} element={<ConsultationPage />} />
       <Route path={ROUTES.CONSTRUCTION} element={<ConstructionPage />} />
@@ -75,20 +83,20 @@ const AppRoutes = () => {
       <Route path="/real-estate/properties" element={<RealEstatePage />} />
       <Route path="/real-estate/development" element={<RealEstatePage />} />
       <Route path={ROUTES.REAL_ESTATE_LISTINGS} element={<RealEstatePage />} />
-      <Route path={ROUTES.REAL_ESTATE_DETAIL} element={<RealEstatePage />} />
-      <Route path="/real-estate/properties/:id" element={<RealEstatePage />} />
+      <Route path={ROUTES.REAL_ESTATE_DETAIL} element={<RealEstateDetailPage />} />
+      <Route path="/real-estate/properties/:id" element={<RealEstateDetailPage />} />
       <Route path={ROUTES.REAL_ESTATE_MY_LISTINGS} element={<RealEstatePage />} />
       <Route path={ROUTES.REAL_ESTATE_ADD} element={<RealEstatePage />} />
       <Route path={ROUTES.RENTAL} element={<RentalPage />} />
       <Route path="/rental-housing" element={<RentalPage />} />
-      <Route path="/rental-housing/:id" element={<RentalPage />} />
+      <Route path="/rental-housing/:id" element={<RentalDetailPage />} />
       <Route path={ROUTES.RENTAL_LISTINGS} element={<RentalPage />} />
       <Route path={ROUTES.RENTAL_DETAIL} element={<RentalPage />} />
       <Route path={ROUTES.RENTAL_MY_LISTINGS} element={<RentalPage />} />
       <Route path={ROUTES.RENTAL_ADD} element={<RentalPage />} />
       <Route path={ROUTES.HOTELS} element={<HotelsPage />} />
       <Route path="/hotels-airbnb" element={<HotelsPage />} />
-      <Route path="/hotels-airbnb/:id" element={<HotelsPage />} />
+      <Route path="/hotels-airbnb/:id" element={<HotelDetailPage />} />
       <Route path={ROUTES.HOTELS_LISTINGS} element={<HotelsPage />} />
       <Route path={ROUTES.HOTELS_DETAIL} element={<HotelsPage />} />
       <Route path={ROUTES.HOTELS_MY_LISTINGS} element={<HotelsPage />} />
@@ -98,6 +106,7 @@ const AppRoutes = () => {
       <Route path="/projects" element={<PortfolioPage />} />
       <Route path={ROUTES.PORTFOLIO_DETAIL} element={<PortfolioPage />} />
       <Route path="/projects/:id" element={<PortfolioPage />} />
+      <Route path="/portfolio/sample" element={<SampleDetailPage />} />
       <Route path={ROUTES.BLOG} element={<BlogPage />} />
       <Route path={ROUTES.BLOG_DETAIL} element={<BlogPage />} />
       <Route path={ROUTES.ABOUT} element={<AboutPage />} />

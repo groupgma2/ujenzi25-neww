@@ -89,8 +89,8 @@ export const DashboardLayout = () => {
           {/* Logo */}
           <div className="flex items-center justify-between h-16 px-4 border-b border-border">
             <Link to={ROUTES.HOME} className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
-                <span className="text-white font-bold text-lg">U25</span>
+              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center overflow-hidden shadow-sm ring-1 ring-white/50">
+                <img src="/assets/u25-logo.png" alt="Ujenzi 25" className="h-8 w-auto object-contain" />
               </div>
               <span className="font-bold text-xl text-text">UJENZI 25</span>
             </Link>

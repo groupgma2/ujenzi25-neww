@@ -95,8 +95,8 @@ export const Footer = () => {
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link to={ROUTES.HOME} className="flex items-center gap-3 mb-6" aria-label={t('common.appName')}>
-              <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-                <span className="text-white font-bold text-2xl">U25</span>
+              <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center overflow-hidden shadow-sm ring-2 ring-white/20">
+                <img src="/assets/u25-logo.png" alt="Ujenzi 25" className="h-12 w-auto object-contain" />
               </div>
               <span className="font-bold text-3xl">{t('common.appName')}</span>
             </Link>

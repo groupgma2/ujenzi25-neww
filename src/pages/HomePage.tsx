@@ -1,323 +1,168 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Shield, Clock, MapPin, Building, Home, Hotel, Hammer, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, Building, Home, Hotel, Hammer, FileText } from 'lucide-react';
 import { useI18n } from '../context/I18nContext';
 import { Button } from '../shared/ui/Button';
-import { Card, CardMedia, CardContent } from '../shared/ui/Card';
-import { Badge } from '../shared/ui/Badge';
 import { SERVICE_CATEGORIES } from '../types';
 import { ROUTES } from '../shared/constants';
-import { useApiCollection } from '../shared/hooks/useApiCollection';
-
-const features = [
-  { icon: Shield, title: 'Clear service workflows', description: 'Move from enquiry to fulfilment with each step visible' },
-  { icon: Clock, title: 'Status tracking', description: 'Keep requests, documents, and updates in one place' },
-  { icon: MapPin, title: 'Location-ready services', description: 'Capture the location details your project requires' },
-  { icon: Building, title: 'One connected platform', description: 'Construction, property, rental, and stays in one system' },
-];
-
-const heroSlides = [
-  {
-    image: '/images/hero/construction.webp',
-    eyebrow: 'Construction',
-    title: 'Build with Confidence',
-    subtitle: 'Quality building materials and skilled labour teams for every project, delivered across Tanzania.',
-    cta: { label: 'Browse Materials', to: ROUTES.CONSTRUCTION },
-  },
-  {
-    image: '/images/hero/real-estate.webp',
-    eyebrow: 'Real Estate',
-    title: 'Find Your Property',
-    subtitle: 'Verified listings, transparent pricing and complete documentation for land and buildings.',
-    cta: { label: 'Browse Properties', to: ROUTES.REAL_ESTATE },
-  },
-  {
-    image: '/images/hero/hotels.webp',
-    eyebrow: 'Hotels & Stays',
-    title: 'Book Your Perfect Stay',
-    subtitle: 'Short-term stays and Airbnb experiences with verified hosts and instant booking.',
-    cta: { label: 'Browse Stays', to: ROUTES.HOTELS },
-  },
-  {
-    image: '/images/hero/consultation.webp',
-    eyebrow: 'Consultation',
-    title: 'Expert Civil Consultation',
-    subtitle: 'Architectural, structural and services drawings, BoQ and construction management from licensed professionals.',
-    cta: { label: 'Request Consultation', to: ROUTES.CONSULTATION },
-  },
-  {
-    image: '/images/hero/rental.webp',
-    eyebrow: 'Rental Housing',
-    title: 'Find Your New Home',
-    subtitle: 'Long-term rentals with verified landlords and transparent pricing across every region.',
-    cta: { label: 'Browse Rentals', to: ROUTES.RENTAL },
-  },
-];
 
 export const HomePage = () => {
   const { t } = useI18n();
-  const { items: properties } = useApiCollection<any>('/properties');
-
-  const [currentSlide, setCurrentSlide] = React.useState(0);
-
-  React.useEffect(() => {
-    const id = setInterval(() => {
-      setCurrentSlide((c) => (c + 1) % heroSlides.length);
-    }, 5000);
-    return () => clearInterval(id);
-  }, []);
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Carousel */}
-      <section className="relative h-[560px] overflow-hidden bg-[#0f1220] sm:h-[600px] lg:h-[640px]">
-        {heroSlides.map((slide, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-            aria-hidden={index !== currentSlide}
-          >
-            <img
-              src={slide.image}
-              alt={slide.title}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0c0f1c]/95 via-[#0c0f1c]/75 to-[#0c0f1c]/25" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0c0f1c]/80 via-transparent to-transparent" />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.12)_0%,transparent_38%,rgba(255,255,255,0.05)_100%)]" />
-            <div className="container relative flex h-full items-center">
-              <div className="max-w-2xl py-16 lg:py-24">
-                <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white/90 backdrop-blur-sm">
-                  <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                  {slide.eyebrow}
-                </span>
-                <h1 className="text-4xl font-bold leading-[1.08] text-white sm:text-5xl lg:text-6xl">
-                  {slide.title}
-                </h1>
-                <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/85 sm:text-xl">
-                  {slide.subtitle}
-                </p>
-                <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                  <Link
-                    to={slide.cta.to}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-lg font-semibold text-primary shadow-lg transition-all duration-200 hover:bg-gray-100"
-                  >
-                    {slide.cta.label}
-                    <ArrowRight className="h-5 w-5" />
-                  </Link>
-                  <Link
-                    to={ROUTES.PORTFOLIO}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-white/60 bg-white/5 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-white/10"
-                  >
-                    {t('nav.portfolio')}
-                  </Link>
+    <div className="min-h-screen bg-white text-text">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900">
+        {/* Desktop & tablet: video (hidden on small screens) */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/assets/homepage-bg.jpg"
+          className="hidden sm:block absolute inset-0 w-full h-full object-cover object-center"
+          style={{ objectPosition: 'center top' }}
+          onLoadedMetadata={(e) => {
+            try { (e.currentTarget as HTMLVideoElement).playbackRate = 1.5; } catch (err) { /* ignore */ }
+          }}
+          onError={() => console.warn('Hero video failed to load')}
+        >
+          <source src="/assets/homepage-hero.mp4" type="video/mp4" />
+          Your browser does not support HTML5 video.
+        </video>
+
+        {/* Mobile: use poster image to avoid cropping / heavy downloads */}
+        <img
+          src="/assets/homepage-bg.jpg"
+          alt="Ujenzi 25 background"
+          className="block sm:hidden absolute inset-0 w-full h-full object-cover object-center"
+        />
+
+        {/* Dark overlay: lighter on mobile, darker on desktop */}
+        <div className="absolute inset-0 bg-black/20 sm:bg-black/35"></div>
+
+        {/* Content */}
+        <div className="relative z-10 container py-10 sm:py-16">
+
+          <div className="max-w-6xl mx-auto">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:gap-12">
+              {/* Left: Large logo + slogan */}
+              <div className="flex-1 flex items-center gap-6">
+                <div className="flex-shrink-0 hidden sm:flex h-32 w-32 items-center justify-center rounded-3xl bg-primary overflow-hidden shadow-2xl ring-4 ring-white/30">
+                  <img src="/assets/u25-logo.png" alt="Ujenzi 25" className="h-24 w-auto object-contain" />
+                </div>
+
+                <div>
+                  <p className="mb-2 text-sm font-semibold uppercase tracking-[0.24em] text-orange-300">{t('homepage.tagline')}</p>
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white">
+                    {t('homepage.headline')}
+                  </h1>
+                  <p className="mt-3 max-w-xl text-sm text-gray-200">
+                    {t('homepage.description')}
+                  </p>
+                </div>
+              </div>
+
+              {/* Right: Quick start card */}
+              <div className="mt-8 lg:mt-0 w-full lg:w-[33%]">
+                <div className="rounded-3xl border border-white/20 bg-white/10 backdrop-blur p-5 shadow-lg sm:p-6">
+                  <div className="mb-4 text-sm font-semibold text-orange-300">{t('homepage.quickStart')}</div>
+                  <div className="space-y-3 text-sm text-gray-100">
+                    <div className="rounded-2xl bg-white/5 p-3">1. {t('homepage.step1')}</div>
+                    <div className="rounded-2xl bg-white/5 p-3">2. {t('homepage.step2')}</div>
+                    <div className="rounded-2xl bg-white/5 p-3">3. {t('homepage.step3')}</div>
+                  </div>
                 </div>
               </div>
             </div>
+
+            {/* CTA buttons below for small screens */}
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link to={ROUTES.CONSULTATION_REQUEST}>
+                <Button size="lg" className="w-full sm:w-auto px-6">
+                  {t('homepage.cta1')}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to={ROUTES.PORTFOLIO}>
+                <Button size="lg" variant="outline" className="w-full sm:w-auto px-6 border-white text-white hover:bg-white/10">
+                  {t('homepage.cta2')}
+                </Button>
+              </Link>
+            </div>
           </div>
-        ))}
-
-        <button
-          type="button"
-          onClick={() => setCurrentSlide((cur) => (cur - 1 + heroSlides.length) % heroSlides.length)}
-          className="absolute left-4 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-black/30 p-3 text-white backdrop-blur-sm transition-colors hover:bg-black/50"
-          aria-label="Previous slide"
-        >
-          <ChevronLeft className="h-6 w-6" />
-        </button>
-        <button
-          type="button"
-          onClick={() => setCurrentSlide((cur) => (cur + 1) % heroSlides.length)}
-          className="absolute right-4 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-black/30 p-3 text-white backdrop-blur-sm transition-colors hover:bg-black/50"
-          aria-label="Next slide"
-        >
-          <ChevronRight className="h-6 w-6" />
-        </button>
-
-        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
-          {heroSlides.map((_, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => setCurrentSlide(index)}
-              className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/40 hover:bg-white/70'}`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
         </div>
       </section>
 
-      {/* Service Categories Preview */}
-      <section className="relative z-10 -mt-16 pb-16">
+      <section className="py-8 sm:py-10">
         <div className="container">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {SERVICE_CATEGORIES.map((category, index) => (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {SERVICE_CATEGORIES.map((category) => (
               <Link
                 key={category.id}
                 to={`/${category.slug}`}
-                className="group card-hover animate-slide-up rounded-2xl border border-border bg-white p-6 text-center shadow-lg"
-                style={{ animationDelay: `${index * 100}ms` }}
+                className="group rounded-2xl border border-border bg-white p-4 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
               >
                 <div
-                  className="w-16 h-16 rounded-xl mx-auto mb-4 flex items-center justify-center transition-colors group-hover:scale-110"
+                  className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl"
                   style={{ backgroundColor: `${category.color}15` }}
                 >
-                  <span className="text-2xl" style={{ color: category.color }}>
-                    {category.icon === 'drafting' && <FileText className="w-8 h-8" />}
-                    {category.icon === 'hammer' && <Hammer className="w-8 h-8" />}
-                    {category.icon === 'building' && <Building className="w-8 h-8" />}
-                    {category.icon === 'home' && <Home className="w-8 h-8" />}
-                    {category.icon === 'bed' && <Hotel className="w-8 h-8" />}
+                  <span style={{ color: category.color }}>
+                    {category.icon === 'drafting' && <FileText className="h-5 w-5" />}
+                    {category.icon === 'hammer' && <Hammer className="h-5 w-5" />}
+                    {category.icon === 'building' && <Building className="h-5 w-5" />}
+                    {category.icon === 'home' && <Home className="h-5 w-5" />}
+                    {category.icon === 'bed' && <Hotel className="h-5 w-5" />}
                   </span>
                 </div>
-                <h3 className="font-semibold text-text group-hover:text-primary transition-colors">
-                  {category.name}
-                </h3>
-                <p className="text-sm text-text-muted mt-1 line-clamp-2">{category.description}</p>
+                <h3 className="text-sm font-semibold text-text group-hover:text-primary">{category.name}</h3>
+                <p className="mt-1 text-[11px] leading-snug text-text-secondary line-clamp-2">{category.description}</p>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Services Overview */}
-      <section className="section">
-        <div className="container">
-          <div className="page-header text-center">
-            <h2 className="page-title">Our Services</h2>
-            <p className="page-subtitle">Five interconnected pillars for all your property & construction needs</p>
+      <section className="pb-12">
+        <div className="container max-w-4xl">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold sm:text-3xl">{t('homepage.easyWay')}</h2>
+            <p className="mt-2 text-text-secondary">{t('homepage.easyWayDesc')}</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            {SERVICE_CATEGORIES.map((category, index) => (
-              <Link
-                key={category.id}
-                to={`/${category.slug}`}
-                className="card-hover group"
-              >
-                <CardMedia
-                  src={`/images/hero/${category.slug}.webp`}
-                  alt={category.name}
-                  aspectRatio="4/3"
-                />
-                <CardContent className="p-5">
-                  <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center mb-3 transition-colors group-hover:scale-110"
-                    style={{ backgroundColor: `${category.color}15` }}
-                  >
-                    <span style={{ color: category.color }}>
-                      {category.icon === 'drafting' && <FileText className="w-5 h-5" />}
-                      {category.icon === 'hammer' && <Hammer className="w-5 h-5" />}
-                      {category.icon === 'building' && <Building className="w-5 h-5" />}
-                      {category.icon === 'home' && <Home className="w-5 h-5" />}
-                      {category.icon === 'bed' && <Hotel className="w-5 h-5" />}
-                    </span>
-                  </div>
-                  <h3 className="font-semibold text-lg mb-1 group-hover:text-primary transition-colors">
-                    {category.name}
-                  </h3>
-                  <p className="text-sm text-text-secondary mb-3 line-clamp-2">{category.description}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-primary">
-                      {t('common.learnMore')}
-                      <ArrowRight className="w-4 h-4 inline ml-1" />
-                    </span>
-                    <Badge variant="primary" className="text-xs">
-                      {index + 1}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Link>
-            ))}
+
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl border border-border bg-gray-50 p-5 text-center">
+              <div className="mb-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">1</div>
+              <h3 className="font-semibold">{t('homepage.step1')}</h3>
+              <p className="mt-2 text-sm text-text-secondary">{t('homepage.step1Desc')}</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-gray-50 p-5 text-center">
+              <div className="mb-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">2</div>
+              <h3 className="font-semibold">{t('homepage.step2')}</h3>
+              <p className="mt-2 text-sm text-text-secondary">{t('homepage.step2Desc')}</p>
+            </div>
+            <div className="rounded-2xl border border-border bg-gray-50 p-5 text-center">
+              <div className="mb-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">3</div>
+              <h3 className="font-semibold">{t('homepage.step3')}</h3>
+              <p className="mt-2 text-sm text-text-secondary">{t('homepage.step3Desc')}</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="section bg-gray-50">
-        <div className="container">
-          <div className="page-header text-center">
-            <h2 className="page-title">{t('common.appName')} Advantage</h2>
-            <p className="page-subtitle max-w-2xl mx-auto">Why thousands choose us for their construction & property needs</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <Card key={index} hover padding="lg" className="text-center">
-                <div className="w-14 h-14 rounded-xl mx-auto mb-4 flex items-center justify-center gradient-primary">
-                  <feature.icon className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
-                <p className="text-text-secondary">{feature.description}</p>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Properties */}
-      <section className="section">
-        <div className="container">
-          <div className="page-header text-center">
-            <h2 className="page-title">Featured Properties</h2>
-            <p className="page-subtitle">Handpicked listings across Tanzania</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {properties.length === 0 ? (
-              <div className="col-span-full rounded-2xl border border-dashed border-border bg-gray-50 p-10 text-center text-text-secondary">
-                No properties are available yet. Published listings will appear here.
-              </div>
-            ) : properties.map((p) => (
-              <Card key={p.id} hover>
-                <CardMedia src={p.image} alt={p.title} aspectRatio="16/10" />
-                <CardContent>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-semibold text-lg">{p.title}</h3>
-                      <p className="text-sm text-text-secondary">{p.location}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-bold text-primary">{p.price}</div>
-                      <div className="text-sm text-text-muted">{p.type}</div>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 flex items-center justify-between text-sm text-text-secondary">
-                    <span>{p.beds} beds</span>
-                    <span>{p.baths} baths</span>
-                    <span>{p.area}</span>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between">
-                    <Link to={`/real-estate/${p.id}`} className="text-sm font-medium text-primary">
-                      View Details <ArrowRight className="w-4 h-4 inline ml-1" />
-                    </Link>
-                    <Button size="sm" className="btn-outline">Contact</Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="section gradient-primary-bg">
-        <div className="container text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Ready to Start Your Project?
-          </h2>
-          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join thousands of satisfied clients. Get professional consultation, quality materials, verified properties, and seamless bookings all in one place.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to={ROUTES.CONSULTATION}>
-              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 w-full sm:w-auto px-8">
-                Get Free Consultation
-                <ArrowRight className="w-5 h-5" />
+      <section className="pb-16">
+        <div className="container max-w-3xl text-center">
+          <h2 className="text-2xl font-bold sm:text-3xl">{t('homepage.readyToStart')}</h2>
+          <p className="mt-3 text-text-secondary">{t('homepage.readyToStartDesc')}</p>
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link to={ROUTES.CONSULTATION_REQUEST}>
+              <Button size="lg" className="w-full sm:w-auto px-8">
+                {t('homepage.readyToStart')}
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
             <Link to={ROUTES.CONTACT}>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 w-full sm:w-auto px-8">
-                Contact Us
+              <Button size="lg" variant="outline" className="w-full sm:w-auto px-8">
+                {t('nav.contact')}
               </Button>
             </Link>
           </div>

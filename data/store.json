@@ -1,0 +1,640 @@
+{
+  "users": [
+    {
+      "id": "dca8fbd1-1151-4e5d-b5fa-f1966820cd4e",
+      "fullName": "System Administrator",
+      "email": "admin@ujenzi25.com",
+      "phone": "+255 750 000 001",
+      "passwordHash": "$2b$12$KrakPz1iOB2FreCG8IZ84esu.qLNXOVTn0w5zJhUSeZ4ZRgQ12R0S",
+      "role": "admin",
+      "isVerified": true,
+      "createdAt": "2026-09-08T17:41:16.477Z",
+      "updatedAt": "2026-09-08T17:41:16.477Z"
+    },
+    {
+      "id": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+      "fullName": "Amina Juma",
+      "email": "amina@example.com",
+      "phone": "+255 750 000 002",
+      "passwordHash": "$2b$12$n2AuI2jw.drzrisN0XMGheVUlNMpI7a.fssdQrGN7GnTmCXdnbnXG",
+      "role": "client",
+      "isVerified": true,
+      "createdAt": "2026-09-08T17:41:16.477Z",
+      "updatedAt": "2026-09-08T17:41:16.477Z"
+    },
+    {
+      "id": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+      "fullName": "BuildCo Supplies Ltd",
+      "email": "supplier@buildco.co.tz",
+      "phone": "+255 750 000 003",
+      "passwordHash": "$2b$12$G4YGuUHYGiXerpFNg1k9q.yE3igBFeH30XJDPVHX/E9bjJvk2nxGu",
+      "role": "partner",
+      "isVerified": true,
+      "createdAt": "2026-09-08T17:41:16.477Z",
+      "updatedAt": "2026-09-08T17:41:16.477Z"
+    },
+    {
+      "id": "92d48101-65fd-424e-aad5-fe7408b0c951",
+      "fullName": "E2E Register",
+      "email": "e2e-register-1789573236094@example.com",
+      "phone": "0712345678",
+      "passwordHash": "$2b$12$msrOXR7ECbdeSOLs8AEec.FclmGOUkKL8fO5ak2OD56eeRRNoLL1G",
+      "role": "client",
+      "isVerified": false,
+      "createdAt": "2026-09-16T15:40:36.446Z",
+      "updatedAt": "2026-09-16T15:40:36.446Z"
+    }
+  ],
+  "resources": {
+    "properties": [
+      {
+        "id": "prop-001",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "type": "residential",
+        "title": "3-Bedroom Modern House in Masaki",
+        "location": "Masaki, Dar es Salaam",
+        "price": 450000000,
+        "size": "250 sqm",
+        "image": "/images/hero/real-estate.webp",
+        "verified": true,
+        "status": "active",
+        "beds": 3,
+        "baths": 2
+      },
+      {
+        "id": "prop-002",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "type": "land",
+        "title": "Prime Plot in Mikocheni",
+        "location": "Mikocheni, Dar es Salaam",
+        "price": 180000000,
+        "size": "400 sqm",
+        "image": "/images/hero/real-estate.webp",
+        "verified": true,
+        "status": "active",
+        "beds": 0,
+        "baths": 0
+      },
+      {
+        "id": "prop-003",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "type": "commercial",
+        "title": "Office Building in the CBD",
+        "location": "Kivukoni, Dar es Salaam",
+        "price": 1200000000,
+        "size": "900 sqm",
+        "image": "/images/hero/real-estate.webp",
+        "verified": true,
+        "status": "active"
+      },
+      {
+        "id": "prop-004",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "type": "residential",
+        "title": "Apartment in Upanga",
+        "location": "Upanga, Dar es Salaam",
+        "price": 220000000,
+        "size": "120 sqm",
+        "image": "/images/hero/real-estate.webp",
+        "verified": false,
+        "status": "under_offer"
+      },
+      {
+        "id": "prop-005",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "type": "farm",
+        "title": "10-Acre Farm in Morogoro",
+        "location": "Morogoro",
+        "price": 95000000,
+        "size": "10 acres",
+        "image": "/images/hero/real-estate.webp",
+        "verified": true,
+        "status": "active"
+      },
+      {
+        "id": "prop-006",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "type": "mixed",
+        "title": "Mixed-Use Building in Mwanza",
+        "location": "Nyamagana, Mwanza",
+        "price": 850000000,
+        "size": "600 sqm",
+        "image": "/images/hero/real-estate.webp",
+        "verified": true,
+        "status": "active"
+      }
+    ],
+    "rentals": [
+      {
+        "id": "rent-001",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "title": "2-Bedroom Apartment in Sinza",
+        "location": "Sinza, Dar es Salaam",
+        "rent": 850000,
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "type": "apartment",
+        "image": "/images/hero/rental.webp",
+        "verified": true,
+        "status": "available"
+      },
+      {
+        "id": "rent-002",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "title": "Self-Contained Room in Mbezi",
+        "location": "Mbezi Beach, Dar es Salaam",
+        "rent": 350000,
+        "bedrooms": 1,
+        "bathrooms": 1,
+        "type": "rooms",
+        "image": "/images/hero/rental.webp",
+        "verified": true,
+        "status": "available"
+      },
+      {
+        "id": "rent-003",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "title": "4-Bedroom Family House in Arusha",
+        "location": "Njiro, Arusha",
+        "rent": 1500000,
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "type": "house",
+        "image": "/images/hero/rental.webp",
+        "verified": false,
+        "status": "booked"
+      }
+    ],
+    "hotels": [
+      {
+        "id": "hotel-001",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "name": "Serengeti View Lodge",
+        "location": "Arusha",
+        "price": 120000,
+        "rating": 4.8,
+        "type": "hotel",
+        "amenities": [
+          "Free WiFi",
+          "Swimming Pool",
+          "Restaurant",
+          "Breakfast Included"
+        ],
+        "image": "/images/hero/hotels.webp",
+        "status": "active"
+      },
+      {
+        "id": "hotel-002",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "name": "Zanzibar Beach Resort",
+        "location": "Zanzibar",
+        "price": 180000,
+        "rating": 4.9,
+        "type": "hotel",
+        "amenities": [
+          "Swimming Pool",
+          "Sea View",
+          "Room Service"
+        ],
+        "image": "/images/hero/hotels.webp",
+        "status": "active"
+      },
+      {
+        "id": "hotel-003",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "name": "Dar City Serviced Apartments",
+        "location": "Dar es Salaam",
+        "price": 95000,
+        "rating": 4.5,
+        "type": "apartment",
+        "amenities": [
+          "Free WiFi",
+          "Gym",
+          "Parking"
+        ],
+        "image": "/images/hero/hotels.webp",
+        "status": "active"
+      }
+    ],
+    "products": [
+      {
+        "id": "prod-001",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "name": "Portland Cement (50kg)",
+        "supplier": "BuildCo Supplies",
+        "location": "Dar es Salaam",
+        "price": 16500,
+        "unit": "bag",
+        "availableQuantity": 500,
+        "grade": "Grade 42.5",
+        "rating": 4.7,
+        "image": "/images/hero/construction.webp",
+        "category": "building"
+      },
+      {
+        "id": "prod-002",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "name": "Steel Reinforcement Bar (12mm)",
+        "supplier": "SteelWorks Ltd",
+        "location": "Mwanza",
+        "price": 28000,
+        "unit": "piece",
+        "availableQuantity": 1200,
+        "grade": "Fe500",
+        "rating": 4.6,
+        "image": "/images/hero/construction.webp",
+        "category": "building"
+      },
+      {
+        "id": "prod-003",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "name": "Electrical Cable (2.5mm²)",
+        "supplier": "PowerTrade",
+        "location": "Arusha",
+        "price": 145000,
+        "unit": "roll",
+        "availableQuantity": 300,
+        "grade": "Copper",
+        "rating": 4.5,
+        "image": "/images/hero/construction.webp",
+        "category": "electrical"
+      },
+      {
+        "id": "prod-004",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "name": "Water Pump (1HP)",
+        "supplier": "BuildCo Supplies",
+        "location": "Dar es Salaam",
+        "price": 350000,
+        "unit": "unit",
+        "availableQuantity": 80,
+        "grade": "Industrial",
+        "rating": 4.8,
+        "image": "/images/hero/construction.webp",
+        "category": "mechanical"
+      },
+      {
+        "id": "prod-005",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "name": "Roofing Sheets (3m)",
+        "supplier": "RoofMaster",
+        "location": "Mbeya",
+        "price": 32000,
+        "unit": "sheet",
+        "availableQuantity": 2000,
+        "grade": "Gauge 30",
+        "rating": 4.4,
+        "image": "/images/hero/construction.webp",
+        "category": "building"
+      }
+    ],
+    "labourJobs": [],
+    "labourTeams": [],
+    "projects": [
+      {
+        "id": "proj-001",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "title": "Masaki Residential Tower",
+        "category": "residential",
+        "location": "Dar es Salaam",
+        "year": "2023",
+        "area": "4,500 sqm",
+        "image": "/images/hero/portfolio.webp",
+        "featured": true
+      },
+      {
+        "id": "proj-002",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "title": "Dodoma Government Office",
+        "category": "institutional",
+        "location": "Dodoma",
+        "year": "2022",
+        "area": "8,000 sqm",
+        "image": "/images/hero/portfolio.webp",
+        "featured": true
+      },
+      {
+        "id": "proj-003",
+        "ownerId": "00122b27-6c53-4b39-85f7-cc3f70d36200",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "title": "Arusha Shopping Complex",
+        "category": "commercial",
+        "location": "Arusha",
+        "year": "2024",
+        "area": "6,200 sqm",
+        "image": "/images/hero/portfolio.webp",
+        "featured": false
+      }
+    ],
+    "blogPosts": [
+      {
+        "id": "blog-001",
+        "ownerId": "dca8fbd1-1151-4e5d-b5fa-f1966820cd4e",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "slug": "cost-of-building-a-house-tz",
+        "title": "How Much Does It Cost to Build a House in Tanzania?",
+        "excerpt": "A detailed cost breakdown for residential construction across regions, from foundation to finishes.",
+        "content": "Building a house in Tanzania involves several cost stages, from land preparation and foundation works to walling, roofing and finishes.",
+        "author": "Eng. Robert Mwakalinga",
+        "category": "cost-guides",
+        "readTime": 6,
+        "publishedAt": "2026-08-20",
+        "image": "/images/hero/blog.webp",
+        "featured": true
+      },
+      {
+        "id": "blog-002",
+        "ownerId": "dca8fbd1-1151-4e5d-b5fa-f1966820cd4e",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "slug": "choosing-building-materials",
+        "title": "Choosing the Right Building Materials",
+        "excerpt": "How to balance quality, durability and budget when sourcing cement, steel and finishes.",
+        "content": "The quality of your materials determines the lifespan of your building. Learn what to check before you buy.",
+        "author": "Arch. Fatima Hassan",
+        "category": "how-to",
+        "readTime": 5,
+        "publishedAt": "2026-08-14",
+        "image": "/images/hero/blog.webp",
+        "featured": true
+      },
+      {
+        "id": "blog-003",
+        "ownerId": "dca8fbd1-1151-4e5d-b5fa-f1966820cd4e",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "slug": "real-estate-market-trends-2026",
+        "title": "Real Estate Market Trends to Watch in 2026",
+        "excerpt": "Where property prices are heading in Dar es Salaam, Dodoma and beyond.",
+        "content": "The Tanzanian property market continues to grow, with new hotspots emerging in regional capitals.",
+        "author": "Peter Kilonzo",
+        "category": "market-insights",
+        "readTime": 4,
+        "publishedAt": "2026-08-08",
+        "image": "/images/hero/blog.webp",
+        "featured": false
+      }
+    ],
+    "consultations": [
+      {
+        "id": "cons-001",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "type": "architectural",
+        "title": "Residential House Plans",
+        "status": "in_review",
+        "client": "Amina Juma",
+        "assigned": null,
+        "date": "2026-09-02"
+      },
+      {
+        "id": "cons-002",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "type": "structural",
+        "title": "Warehouse Structural Design",
+        "status": "quoted",
+        "client": "Amina Juma",
+        "assigned": "Eng. Grace Mlay",
+        "date": "2026-09-01"
+      },
+      {
+        "id": "1ce9032b-1693-43bb-9b77-7fc077bb6a95",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "clientId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "clientName": "Amina Juma",
+        "type": "architectural",
+        "title": "New Home Design in Mikocheni",
+        "description": "I need full architectural drawings for a 3-bedroom house.",
+        "status": "submitted",
+        "assignedTo": null,
+        "quote": null,
+        "createdAt": "2026-09-08T18:36:06.686Z",
+        "updatedAt": "2026-09-08T18:36:06.686Z"
+      },
+      {
+        "id": "81d868dc-2755-4241-b51f-d6dd75635514",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "clientId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "clientName": "Amina Juma",
+        "type": "architectural",
+        "title": "New Home Design in Mikocheni",
+        "description": "I need full architectural drawings for a 3-bedroom house.",
+        "status": "completed",
+        "assignedTo": null,
+        "quote": {
+          "amount": 250000,
+          "currency": "TZS",
+          "notes": "Includes architectural + structural drawings",
+          "createdAt": "2026-09-08T18:37:32.156Z"
+        },
+        "createdAt": "2026-09-08T18:37:30.710Z",
+        "updatedAt": "2026-09-08T18:37:32.199Z"
+      }
+    ],
+    "orders": [
+      {
+        "id": "ord-001",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "item": "Portland Cement x50",
+        "supplier": "BuildCo Supplies",
+        "status": "processing",
+        "amount": 825000,
+        "date": "2026-09-05"
+      },
+      {
+        "id": "ord-002",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "item": "Roofing Sheets x100",
+        "supplier": "RoofMaster",
+        "status": "shipped",
+        "amount": 3200000,
+        "date": "2026-09-03"
+      }
+    ],
+    "bookings": [
+      {
+        "id": "book-001",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "property": "Serengeti View Lodge",
+        "type": "hotel",
+        "checkIn": "2026-10-01",
+        "checkOut": "2026-10-03",
+        "status": "confirmed",
+        "amount": 240000
+      },
+      {
+        "id": "book-002",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "createdAt": "2026-09-08T17:41:16.477Z",
+        "updatedAt": "2026-09-08T17:41:16.477Z",
+        "property": "Zanzibar Beach Resort",
+        "type": "hotel",
+        "checkIn": "2026-12-15",
+        "checkOut": "2026-12-20",
+        "status": "pending",
+        "amount": 900000
+      }
+    ],
+    "messages": [
+      {
+        "id": "82762bd2-e98d-45b6-8b20-caa8c06402a6",
+        "threadId": "a37308e3-3372-4aa6-be37-33e2a414d8fb",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "senderId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "receiverId": null,
+        "content": "Please include the BoQ as well.",
+        "contextType": "consultation",
+        "contextId": "81d868dc-2755-4241-b51f-d6dd75635514",
+        "readAt": null,
+        "createdAt": "2026-09-08T18:37:32.211Z",
+        "updatedAt": "2026-09-08T18:37:32.211Z"
+      }
+    ],
+    "notifications": [
+      {
+        "id": "335c5596-8d6d-4246-8d14-0f11d8e34887",
+        "ownerId": "dca8fbd1-1151-4e5d-b5fa-f1966820cd4e",
+        "type": "consultation_new",
+        "title": "New consultation request",
+        "message": "Amina Juma submitted \"New Home Design in Mikocheni\"",
+        "data": {
+          "id": "1ce9032b-1693-43bb-9b77-7fc077bb6a95"
+        },
+        "readAt": null,
+        "createdAt": "2026-09-08T18:36:06.686Z",
+        "updatedAt": "2026-09-08T18:36:06.686Z"
+      },
+      {
+        "id": "75f53424-1674-49bd-82ca-d70c190d103b",
+        "ownerId": "dca8fbd1-1151-4e5d-b5fa-f1966820cd4e",
+        "type": "consultation_new",
+        "title": "New consultation request",
+        "message": "Amina Juma submitted \"New Home Design in Mikocheni\"",
+        "data": {
+          "id": "81d868dc-2755-4241-b51f-d6dd75635514"
+        },
+        "readAt": null,
+        "createdAt": "2026-09-08T18:37:30.710Z",
+        "updatedAt": "2026-09-08T18:37:30.710Z"
+      },
+      {
+        "id": "80dc32e3-cadd-4733-ad9a-2da3e05a0306",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "type": "quote_received",
+        "title": "Quotation ready",
+        "message": "A quotation for \"New Home Design in Mikocheni\" is ready for your review",
+        "data": {
+          "id": "81d868dc-2755-4241-b51f-d6dd75635514"
+        },
+        "readAt": null,
+        "createdAt": "2026-09-08T18:37:32.156Z",
+        "updatedAt": "2026-09-08T18:37:32.156Z"
+      },
+      {
+        "id": "0f4649f0-08df-42ed-9556-1ca7193491e8",
+        "ownerId": "dca8fbd1-1151-4e5d-b5fa-f1966820cd4e",
+        "type": "consultation_accepted",
+        "title": "Quotation accepted",
+        "message": "Amina Juma accepted the quotation for \"New Home Design in Mikocheni\"",
+        "data": {
+          "id": "81d868dc-2755-4241-b51f-d6dd75635514"
+        },
+        "readAt": null,
+        "createdAt": "2026-09-08T18:37:32.172Z",
+        "updatedAt": "2026-09-08T18:37:32.172Z"
+      },
+      {
+        "id": "cf35aaea-a1d4-4ec3-b46b-06ef68d7ab11",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "type": "consultation_delivered",
+        "title": "Work delivered",
+        "message": "Your consultation \"New Home Design in Mikocheni\" has been delivered",
+        "data": {
+          "id": "81d868dc-2755-4241-b51f-d6dd75635514"
+        },
+        "readAt": null,
+        "createdAt": "2026-09-08T18:37:32.180Z",
+        "updatedAt": "2026-09-08T18:37:32.180Z"
+      },
+      {
+        "id": "650770eb-d2a4-4d17-8ae4-e548e5e16b27",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "type": "consultation_completed",
+        "title": "Work completed",
+        "message": "Your consultation \"New Home Design in Mikocheni\" is complete",
+        "data": {
+          "id": "81d868dc-2755-4241-b51f-d6dd75635514"
+        },
+        "readAt": null,
+        "createdAt": "2026-09-08T18:37:32.199Z",
+        "updatedAt": "2026-09-08T18:37:32.199Z"
+      }
+    ],
+    "reviews": [],
+    "payments": [
+      {
+        "id": "667e11e2-87af-4f15-9fe8-db95961bc6bd",
+        "ownerId": "6679a6bf-30d3-412c-9199-0c4dabe75f08",
+        "amount": 250000,
+        "currency": "TZS",
+        "method": "mpesa",
+        "status": "paid",
+        "reference": "TXN-667E11E2",
+        "contextType": "consultation",
+        "contextId": "81d868dc-2755-4241-b51f-d6dd75635514",
+        "createdAt": "2026-09-08T18:37:32.270Z",
+        "updatedAt": "2026-09-08T18:37:32.276Z",
+        "completedAt": "2026-09-08T18:37:32.276Z"
+      }
+    ]
+  }
+}

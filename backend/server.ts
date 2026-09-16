@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { createUser, loginUser, publicUser, registerUser, requireAuth, requireRoles, refreshAccessToken, verifyToken, type AuthRequest } from './auth.js';
 import { resources, users, persist, hydrate } from './store.js';
 import { seedIfEmpty } from './seed.js';
+import { fetchTable, insertRecord, fetchRecordById, insertMessage, fetchMessagesByThread, fetchMessagesByContext, supabaseAdmin } from './supabase.js';
 
 hydrate();
 await seedIfEmpty();
@@ -43,7 +44,7 @@ const rateLimiter = (windowMs = 15 * 60 * 1000, max = 20) =>
   };
 
 app.get('/api/health', (_request, response) => {
-  response.json({ status: 'ok', database: 'not-connected', timestamp: new Date().toISOString() });
+  response.json({ status: 'ok', database: supabaseAdmin ? 'connected' : 'not-connected', timestamp: new Date().toISOString() });
 });
 
 const registrationSchema = z.object({
@@ -254,56 +255,103 @@ app.patch('/api/:resource/:id/status', requireAuth, (request: AuthRequest, respo
 });
 
 // -------- Messaging (threads + messages) --------
-app.post('/api/messages', requireAuth, (request: AuthRequest, response) => {
+app.post('/api/messages', requireAuth, async (request: AuthRequest, response) => {
   const { threadId, receiverId, content, contextType, contextId } = request.body || {};
   if (!content) { response.status(400).json({ code: 'VALIDATION_ERROR', message: 'Message content is required' }); return; }
-  const id = randomUUID();
-  const now = new Date().toISOString();
-  const thread = threadId || randomUUID();
-  const record = { id, threadId: thread, ownerId: request.user!.id, senderId: request.user!.id, receiverId: receiverId || null, content, contextType: contextType || null, contextId: contextId || null, readAt: null, createdAt: now, updatedAt: now };
-  resources.get('messages')!.set(id, record);
-  if (receiverId) notify(receiverId, 'message_new', 'New message', `${request.user!.fullName} sent you a message`, { threadId: thread });
-  persist();
-  response.status(201).json(record);
-});
+  try {
+    const saved = await insertMessage({
+      sender_id: request.user!.id,
+      receiver_id: receiverId || null,
+      content,
+      thread_id: threadId ?? randomUUID(),
+      context_type: contextType ?? null,
+      context_id: contextId ?? null,
+    });
 
-app.get('/api/messages/threads', requireAuth, (request: AuthRequest, response) => {
-  const all = [...resources.get('messages')!.values()] as any[];
-  const mine = all.filter((m) => m.senderId === request.user!.id || m.receiverId === request.user!.id);
-  const threads = new Map<string, any>();
-  for (const m of mine) {
-    if (!threads.has(m.threadId)) threads.set(m.threadId, m);
+    if (receiverId) notify(receiverId, 'message_new', 'New message', `${request.user!.fullName} sent you a message`, { threadId: saved.thread_id });
+    response.status(201).json(saved);
+  } catch (err) {
+    console.error('Failed to save message to Supabase:', err);
+    response.status(500).json({ code: 'INTERNAL_ERROR', message: 'Failed to save message' });
   }
-  response.json({ data: [...threads.values()], meta: { total: threads.size, page: 1, limit: threads.size } });
 });
 
-app.get('/api/messages/threads/:id', requireAuth, (request: AuthRequest, response) => {
-  const all = [...resources.get('messages')!.values()] as any[];
-  const data = all.filter((m) => m.threadId === String(request.params.id)).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-  response.json({ data, meta: { total: data.length, page: 1, limit: data.length } });
+app.get('/api/messages/threads', requireAuth, async (request: AuthRequest, response) => {
+  try {
+    if (!supabaseAdmin) throw new Error('Supabase admin client not configured');
+    const userId = request.user!.id;
+    const { data, error } = await supabaseAdmin.from('messages').select('*').or(`sender_id.eq.${userId},receiver_id.eq.${userId}`);
+    if (error) throw error;
+    const mine = data ?? [];
+    const threads = new Map<string, any>();
+    for (const m of mine) {
+      if (!threads.has(m.thread_id)) threads.set(m.thread_id, m);
+    }
+    const values = [...threads.values()];
+    response.json({ data: values, meta: { total: values.length, page: 1, limit: values.length } });
+  } catch (err) {
+    console.error('Failed to fetch message threads:', err);
+    response.status(500).json({ code: 'INTERNAL_ERROR', message: 'Failed to fetch threads' });
+  }
+});
+
+app.get('/api/messages/threads/:id', requireAuth, async (request: AuthRequest, response) => {
+  try {
+    const threadId = String(request.params.id);
+    const messages = await fetchMessagesByThread(threadId);
+    response.json({ data: messages, meta: { total: messages.length, page: 1, limit: messages.length } });
+  } catch (err) {
+    console.error('Failed to fetch thread messages:', err);
+    response.status(500).json({ code: 'INTERNAL_ERROR', message: 'Failed to fetch messages' });
+  }
 });
 
 // -------- Payments --------
-app.post('/api/payments', requireAuth, (request: AuthRequest, response) => {
+app.post('/api/payments', requireAuth, async (request: AuthRequest, response) => {
   const { amount, currency, method, contextType, contextId } = request.body || {};
   if (!amount) { response.status(400).json({ code: 'VALIDATION_ERROR', message: 'Amount is required' }); return; }
-  const id = randomUUID();
-  const now = new Date().toISOString();
-  const record = { id, ownerId: request.user!.id, amount, currency: currency || 'TZS', method: method || 'mpesa', status: 'pending', reference: 'TXN-' + id.slice(0, 8).toUpperCase(), contextType: contextType || null, contextId: contextId || null, createdAt: now, updatedAt: now };
-  resources.get('payments')!.set(id, record);
-  persist();
-  response.status(201).json(record);
+  try {
+    const now = new Date().toISOString();
+    const payload = { owner_id: request.user!.id, amount, currency: currency || 'TZS', method: method || 'mpesa', status: 'pending', reference: 'TXN-' + randomUUID().slice(0, 8).toUpperCase(), context_type: contextType || null, context_id: contextId || null, created_at: now, updated_at: now } as any;
+    if (supabaseAdmin) {
+      const saved = await insertRecord('payments', payload);
+      return response.status(201).json(saved);
+    }
+
+    const id = randomUUID();
+    const record = { id, ownerId: request.user!.id, amount, currency: currency || 'TZS', method: method || 'mpesa', status: 'pending', reference: payload.reference, contextType: contextType || null, contextId: contextId || null, createdAt: now, updatedAt: now };
+    resources.get('payments')!.set(id, record);
+    persist();
+    response.status(201).json(record);
+  } catch (err) {
+    console.error('Failed to create payment:', err);
+    response.status(500).json({ code: 'INTERNAL_ERROR', message: 'Failed to create payment' });
+  }
 });
 
-app.post('/api/payments/:id/pay', requireAuth, (request: AuthRequest, response) => {
-  const record = resources.get('payments')!.get(String(request.params.id)) as any;
-  if (!record) { response.status(404).json({ code: 'NOT_FOUND', message: 'Payment not found' }); return; }
-  record.status = 'paid';
-  record.completedAt = new Date().toISOString();
-  record.updatedAt = new Date().toISOString();
-  resources.get('payments')!.set(record.id, record);
-  persist();
-  response.json(record);
+app.post('/api/payments/:id/pay', requireAuth, async (request: AuthRequest, response) => {
+  try {
+    const id = String(request.params.id);
+    if (supabaseAdmin) {
+      // update record in Supabase
+      const { data, error } = await supabaseAdmin.from('payments').update({ status: 'paid', completed_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq('id', id).select();
+      if (error) throw error;
+      if (!data || data.length === 0) { response.status(404).json({ code: 'NOT_FOUND', message: 'Payment not found' }); return; }
+      return response.json(data[0]);
+    }
+
+    const record = resources.get('payments')!.get(id) as any;
+    if (!record) { response.status(404).json({ code: 'NOT_FOUND', message: 'Payment not found' }); return; }
+    record.status = 'paid';
+    record.completedAt = new Date().toISOString();
+    record.updatedAt = new Date().toISOString();
+    resources.get('payments')!.set(record.id, record);
+    persist();
+    response.json(record);
+  } catch (err) {
+    console.error('Failed to mark payment paid:', err);
+    response.status(500).json({ code: 'INTERNAL_ERROR', message: 'Failed to update payment' });
+  }
 });
 
 // -------- Reviews --------
@@ -340,33 +388,60 @@ const publicResources = new Set(['properties', 'rentals', 'hotels', 'products', 
 const internalResources = new Set(['products', 'labourJobs', 'labourTeams', 'consultations']);
 const resourceParam = z.enum(resourceNames);
 
-app.get('/api/:resource', (request, response) => {
+app.get('/api/:resource', async (request, response) => {
   const parsed = resourceParam.safeParse(request.params.resource);
   if (!parsed.success) {
     response.status(404).json({ code: 'NOT_FOUND', message: 'Resource not found' });
     return;
   }
-  let viewer: any = null;
-  if (!publicResources.has(parsed.data)) {
-    const authorization = request.header('authorization');
-    const token = authorization?.startsWith('Bearer ') ? authorization.slice(7) : null;
-    viewer = token ? verifyToken(token) : null;
-    if (!viewer) {
-      response.status(401).json({ code: 'UNAUTHORIZED', message: 'Authentication required' });
-      return;
+
+  try {
+    // If public resource, return all from Supabase (or fallback to local if Supabase not configured)
+    if (publicResources.has(parsed.data)) {
+      if (supabaseAdmin) {
+        const data = await fetchTable(parsed.data);
+        return response.json({ data, meta: { total: data.length, page: 1, limit: data.length } });
+      }
+      const repo = resources.get(parsed.data)!;
+      const all = [...repo.values()];
+      return response.json({ data: all, meta: { total: all.length, page: 1, limit: all.length } });
     }
+
+    // Private resource: require authentication
+    await new Promise<void>((resolve: any) => requireAuth(request as any, response as any, resolve as any));
+    if (response.headersSent) return;
+    const viewer = (request as AuthRequest).user!;
+
+    const staff = viewer && (viewer.role === 'admin' || viewer.role === 'company');
+    const privateKeys = new Set(['consultations', 'orders', 'bookings', 'messages', 'notifications', 'payments']);
+
+    if (supabaseAdmin) {
+      if (staff) {
+        const data = await fetchTable(parsed.data);
+        return response.json({ data, meta: { total: data.length, page: 1, limit: data.length } });
+      } else if (privateKeys.has(parsed.data)) {
+        const data = await fetchTable(parsed.data, { ownerId: viewer.id });
+        return response.json({ data, meta: { total: data.length, page: 1, limit: data.length } });
+      } else {
+        const data = await fetchTable(parsed.data);
+        return response.json({ data, meta: { total: data.length, page: 1, limit: data.length } });
+      }
+    }
+
+    // Fallback to local store
+    const repository = resources.get(parsed.data)!;
+    const all = [...repository.values()];
+    const data = privateKeys.has(parsed.data) && viewer && !staff
+      ? all.filter((r: any) => r.ownerId === viewer.id)
+      : all;
+    response.json({ data, meta: { total: data.length, page: 1, limit: data.length } });
+  } catch (err) {
+    console.error('Failed to fetch resource from Supabase:', err);
+    response.status(500).json({ code: 'INTERNAL_ERROR', message: 'Failed to fetch resource' });
   }
-  const repository = resources.get(parsed.data)!;
-  const all = [...repository.values()];
-  const staff = !!viewer && (viewer.role === 'admin' || viewer.role === 'company');
-  const privateKeys = new Set(['consultations', 'orders', 'bookings', 'messages', 'notifications', 'payments']);
-  const data = privateKeys.has(parsed.data) && viewer && !staff
-    ? all.filter((r: any) => r.ownerId === viewer.id)
-    : all;
-  response.json({ data, meta: { total: data.length, page: 1, limit: data.length } });
 });
 
-app.post('/api/:resource', requireAuth, (request: AuthRequest, response) => {
+app.post('/api/:resource', requireAuth, async (request: AuthRequest, response) => {
   const parsed = resourceParam.safeParse(request.params.resource);
   if (!parsed.success) {
     response.status(404).json({ code: 'NOT_FOUND', message: 'Resource not found' });
@@ -379,23 +454,43 @@ app.post('/api/:resource', requireAuth, (request: AuthRequest, response) => {
       return;
     }
   }
-  const repository = resources.get(parsed.data)!;
-  const now = new Date().toISOString();
-  const record = { ...request.body, id: randomUUID(), ownerId: request.user!.id, createdAt: now, updatedAt: now };
-  repository.set(record.id, record);
-  persist();
-  response.status(201).json(record);
+
+  try {
+    const now = new Date().toISOString();
+    const payload = { ...request.body, owner_id: request.user!.id, created_at: now, updated_at: now } as any;
+    if (supabaseAdmin) {
+      const saved = await insertRecord(parsed.data, payload);
+      return response.status(201).json(saved);
+    }
+
+    // Fallback to local store
+    const record = { ...request.body, id: randomUUID(), ownerId: request.user!.id, createdAt: now, updatedAt: now };
+    resources.get(parsed.data)!.set(record.id, record);
+    persist();
+    response.status(201).json(record);
+  } catch (err) {
+    console.error('Failed to create resource in Supabase:', err);
+    response.status(500).json({ code: 'INTERNAL_ERROR', message: 'Failed to create resource' });
+  }
 });
 
-app.get('/api/:resource/:id', requireAuth, (request, response) => {
+app.get('/api/:resource/:id', requireAuth, async (request, response) => {
   const parsed = resourceParam.safeParse(request.params.resource);
-  const repository = parsed.success ? resources.get(parsed.data) : undefined;
-  const record = repository?.get(String(request.params.id));
-  if (!record) {
-    response.status(404).json({ code: 'NOT_FOUND', message: 'Record not found' });
-    return;
+  try {
+    if (supabaseAdmin && parsed.success) {
+      const rec = await fetchRecordById(parsed.data, String(request.params.id));
+      if (!rec) { response.status(404).json({ code: 'NOT_FOUND', message: 'Record not found' }); return; }
+      return response.json(rec);
+    }
+
+    const repository = parsed.success ? resources.get(parsed.data) : undefined;
+    const record = repository?.get(String(request.params.id));
+    if (!record) { response.status(404).json({ code: 'NOT_FOUND', message: 'Record not found' }); return; }
+    response.json(record);
+  } catch (err) {
+    console.error('Failed to fetch resource by id:', err);
+    response.status(500).json({ code: 'INTERNAL_ERROR', message: 'Failed to fetch record' });
   }
-  response.json(record);
 });
 
 app.use((_request, response) => response.status(404).json({ code: 'NOT_FOUND', message: 'Route not found' }));
