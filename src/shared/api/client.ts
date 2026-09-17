@@ -73,13 +73,21 @@ class ApiClient {
       (headers as Record<string, string>)['Authorization'] = `Bearer ${sentToken}`;
     }
 
+    const controller = new AbortController();
+    // default timeout 15s to avoid hanging requests on poor networks / SW issues
+    const timeoutMs = Number(import.meta.env.VITE_API_REQUEST_TIMEOUT) || 15000;
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
     const config: RequestInit = {
       ...options,
       headers,
+      signal: controller.signal,
     };
 
     try {
       const response = await fetch(url, config);
+
+      clearTimeout(timeout);
 
       // read + parse the body first so we can surface the server's real message
       const rawText = await response.text();
@@ -140,6 +148,12 @@ class ApiClient {
 
       return { data, error: null };
     } catch (error) {
+      if ((error as any)?.name === 'AbortError') {
+        return {
+          data: null,
+          error: { code: 'NETWORK_TIMEOUT', message: 'Request timed out' },
+        };
+      }
       return {
         data: null,
         error: {
@@ -147,6 +161,8 @@ class ApiClient {
           message: error instanceof Error ? error.message : 'Network error',
         },
       };
+    } finally {
+      clearTimeout(timeout);
     }
   }
 
