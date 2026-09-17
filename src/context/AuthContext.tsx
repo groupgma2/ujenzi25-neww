@@ -14,6 +14,37 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function formatSupabaseAuthError(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error ?? '');
+  const normalized = message.toLowerCase();
+
+  if (normalized.includes('email not confirmed') || normalized.includes('not confirmed')) {
+    return 'Akaunti imesajiliwa, lakini barua pepe bado haijathibitishwa. Tafadhali thibitisha barua pepe yako kwanza.';
+  }
+
+  if (normalized.includes('invalid login credentials') || normalized.includes('invalid credentials')) {
+    return 'Email au password si sahihi. Tafadhali hakikisha umeingiza data sahihi.';
+  }
+
+  if (normalized.includes('signup is disabled') || normalized.includes('signups are disabled') || normalized.includes('sign up is disabled')) {
+    return 'Usajili wa barua pepe umezimwa kwenye Supabase. Washa usajili ndani ya Supabase Auth settings.';
+  }
+
+  if (normalized.includes('rate limit') || normalized.includes('too many requests')) {
+    return 'Umejaribu kutuma barua nyingi kwa haraka. Tafadhali subiri dakika chache kisha ujaribu tena.';
+  }
+
+  if (normalized.includes('user already registered') || normalized.includes('already registered')) {
+    return 'Akaunti hii tayari ipo. Tafadhali ingia badala ya kujisajili tena.';
+  }
+
+  if (normalized.includes('auth disabled') || normalized.includes('not enabled')) {
+    return 'Authentication kwenye Supabase haijawezeshwa au imesitishwa. Angalia Supabase Auth settings.';
+  }
+
+  return message || 'Imeshindwa kuthibitisha akaunti. Tafadhali jaribu tena.';
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const clearAuth = useCallback(() => {
     localStorage.removeItem('ujenzi25_auth_token');
@@ -127,24 +158,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       if (isSupabaseConfigured && supabase) {
-        const data = await signInWithSupabase(email, password);
-        const user = mapSupabaseUser(data.user);
-        if (!user || !data.session) {
-          setState(prev => ({ ...prev, isLoading: false }));
-          throw new Error('Unable to sign in with Supabase');
-        }
+        try {
+          const data = await signInWithSupabase(email, password);
+          const user = mapSupabaseUser(data.user);
+          if (!user || !data.session) {
+            setState(prev => ({ ...prev, isLoading: false }));
+            throw new Error('Unable to sign in with Supabase');
+          }
 
-        api.setToken(data.session.access_token);
-        localStorage.setItem('ujenzi25_refresh_token', data.session.refresh_token);
-        localStorage.setItem('ujenzi25_user', JSON.stringify(user));
-        setState({
-          user,
-          token: data.session.access_token,
-          refreshToken: data.session.refresh_token,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-        return;
+          api.setToken(data.session.access_token);
+          localStorage.setItem('ujenzi25_refresh_token', data.session.refresh_token);
+          localStorage.setItem('ujenzi25_user', JSON.stringify(user));
+          setState({
+            user,
+            token: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+          return;
+        } catch (supabaseError) {
+          try {
+            const response = await authApi.login(email, password, rememberMe);
+            if (response.error) {
+              throw new Error(response.error.message);
+            }
+
+            if (response.data) {
+              const { user, token, refreshToken } = response.data;
+              api.setToken(token);
+              localStorage.setItem('ujenzi25_refresh_token', refreshToken);
+              localStorage.setItem('ujenzi25_user', JSON.stringify(user));
+
+              setState({
+                user,
+                token,
+                refreshToken,
+                isAuthenticated: true,
+                isLoading: false,
+              });
+              return;
+            }
+          } catch (localError) {
+            setState(prev => ({ ...prev, isLoading: false }));
+            const message = formatSupabaseAuthError(supabaseError) || (localError instanceof Error ? localError.message : 'Unable to sign in');
+            throw new Error(message);
+          }
+        }
       }
 
       const response = await authApi.login(email, password, rememberMe);
@@ -178,45 +238,87 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       if (isSupabaseConfigured && supabase) {
-        const signUpResult = await signUpWithSupabase({
-          email: data.email,
-          password: data.password,
-          fullName: data.fullName,
-          phone: data.phone,
-          role: data.role,
-        });
+        try {
+          const signUpResult = await signUpWithSupabase({
+            email: data.email,
+            password: data.password,
+            fullName: data.fullName,
+            phone: data.phone,
+            role: data.role,
+          });
 
-        let finalSession = signUpResult.session;
-        let finalUser = signUpResult.user;
+          const finalSession = signUpResult.session;
+          const finalUser = signUpResult.user;
 
-        if (!finalSession && data.email && data.password) {
-          const fallback = await signInWithSupabase(data.email, data.password);
-          finalSession = fallback.session;
-          finalUser = fallback.user;
+          if (!finalUser) {
+            setState(prev => ({ ...prev, isLoading: false }));
+            throw new Error('Unable to complete registration');
+          }
+
+          const user = mapSupabaseUser(finalUser);
+          if (!user) {
+            setState(prev => ({ ...prev, isLoading: false }));
+            throw new Error('Registration succeeded but your account could not be loaded. Please try again.');
+          }
+
+          if (!finalSession) {
+            const fallback = await signInWithSupabase(data.email, data.password);
+            if (!fallback.session || !fallback.user) {
+              setState(prev => ({ ...prev, isLoading: false }));
+              throw new Error('Akaunti imeundwa. Tafadhali thibitisha barua pepe yako kabla ya kuingia. Ikiwa unataka kuingia mara moja katika mazingira ya maendeleo, zima “Confirm email” kwenye Supabase Auth settings.');
+            }
+            api.setToken(fallback.session.access_token);
+            localStorage.setItem('ujenzi25_refresh_token', fallback.session.refresh_token);
+            localStorage.setItem('ujenzi25_user', JSON.stringify(user));
+            setState({
+              user,
+              token: fallback.session.access_token,
+              refreshToken: fallback.session.refresh_token,
+              isAuthenticated: true,
+              isLoading: false,
+            });
+            return;
+          }
+
+          api.setToken(finalSession.access_token);
+          localStorage.setItem('ujenzi25_refresh_token', finalSession.refresh_token);
+          localStorage.setItem('ujenzi25_user', JSON.stringify(user));
+          setState({
+            user,
+            token: finalSession.access_token,
+            refreshToken: finalSession.refresh_token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+          return;
+        } catch (supabaseError) {
+          try {
+            const response = await authApi.register(data);
+            if (response.error) {
+              throw new Error(response.error.message);
+            }
+
+            if (response.data) {
+              const { user, token, refreshToken } = response.data;
+              api.setToken(token);
+              localStorage.setItem('ujenzi25_refresh_token', refreshToken);
+              localStorage.setItem('ujenzi25_user', JSON.stringify(user));
+
+              setState({
+                user,
+                token,
+                refreshToken,
+                isAuthenticated: true,
+                isLoading: false,
+              });
+              return;
+            }
+          } catch (localError) {
+            setState(prev => ({ ...prev, isLoading: false }));
+            const message = formatSupabaseAuthError(supabaseError) || (localError instanceof Error ? localError.message : 'Registration failed');
+            throw new Error(message);
+          }
         }
-
-        if (!finalUser) {
-          setState(prev => ({ ...prev, isLoading: false }));
-          throw new Error('Unable to complete registration');
-        }
-
-        const user = mapSupabaseUser(finalUser);
-        if (!user || !finalSession) {
-          setState(prev => ({ ...prev, isLoading: false }));
-          throw new Error('Account created, but email confirmation is required before you can sign in. Turn off email confirmation in your Supabase Auth settings or confirm the email first.');
-        }
-
-        api.setToken(finalSession.access_token);
-        localStorage.setItem('ujenzi25_refresh_token', finalSession.refresh_token);
-        localStorage.setItem('ujenzi25_user', JSON.stringify(user));
-        setState({
-          user,
-          token: finalSession.access_token,
-          refreshToken: finalSession.refresh_token,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-        return;
       }
 
       const response = await authApi.register(data);

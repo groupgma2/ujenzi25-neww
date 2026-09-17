@@ -3,6 +3,15 @@ import { createClient } from '@supabase/supabase-js';
 const url = process.env.VITE_SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+// Diagnostic: log presence (masked) of keys so we can confirm backend sees them without printing secrets
+function mask(v?: string) {
+  if (!v) return 'MISSING';
+  const len = v.length;
+  if (len <= 6) return '*'.repeat(len);
+  return v.slice(0,3) + '...' + v.slice(-3) + ` (len=${len})`;
+}
+console.log('Supabase env: VITE_SUPABASE_URL=' + mask(url) + ', SUPABASE_SERVICE_ROLE_KEY=' + (serviceKey ? '(set, len='+serviceKey.length+')' : 'MISSING'));
+
 if (!url || !serviceKey) {
   console.warn('Supabase URL or service role key not configured for backend supabase client. Server-side DB operations will be disabled.');
 }

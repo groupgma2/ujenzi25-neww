@@ -43,6 +43,28 @@
       "isVerified": false,
       "createdAt": "2026-09-16T15:40:36.446Z",
       "updatedAt": "2026-09-16T15:40:36.446Z"
+    },
+    {
+      "id": "b38a4a07-3d56-4a21-87b8-28ac380a0f2f",
+      "fullName": "Test User",
+      "email": "testuser@example.com",
+      "phone": "+255712345678",
+      "passwordHash": "$2b$12$sMNW3LNBR4gXLoJkOIU0Uu6cfSMVa2vqT/vxenfN1zkso0tqWfz6O",
+      "role": "client",
+      "isVerified": false,
+      "createdAt": "2026-09-17T06:17:42.997Z",
+      "updatedAt": "2026-09-17T06:17:42.997Z"
+    },
+    {
+      "id": "5c7a7498-d782-44fb-87f4-f196bdd581fc",
+      "fullName": "Detective G",
+      "email": "detectiveg997@gmail.com",
+      "phone": "0626576956",
+      "passwordHash": "$2b$12$RTkIShukjwXmDa7UB9M8veNHcxYYK5voMLPk7YgLED4214kjts95K",
+      "role": "client",
+      "isVerified": false,
+      "createdAt": "2026-09-17T06:27:55.588Z",
+      "updatedAt": "2026-09-17T06:27:55.588Z"
     }
   ],
   "resources": {
