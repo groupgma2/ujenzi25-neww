@@ -512,24 +512,3 @@ const shutdown = (signal: string) => {
 };
 process.on('SIGINT', () => shutdown('SIGINT'));
 process.on('SIGTERM', () => shutdown('SIGTERM'));
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-// Kwa sababu unatumia "type": "module" (ES Modules)
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// 1. Hudumia mafaili ya React (kama css, js, picha) kutoka folda ya dist
-// Tunarudi nyuma hatua mbili (../..) kutoka backend/dist hadi kwenye root dist
-app.use(express.static(path.join(__dirname, '../../dist')));
-
-// 2. Elekeza njia nyingine zote za kawaida zifungue index.html ya React
-app.get('*', (req, response) => {
-  response.sendFile(path.join(__dirname, '../../dist/index.html'));
-});
-
-// Mwishoni kabisa mwa faili app yako itawaka kama kawaida
-app.listen(port, () => {
-  console.log(`Server inafanya kazi kwenye port ${port}`);
-});
-
