@@ -7,6 +7,7 @@ import { createUser, loginUser, publicUser, registerUser, requireAuth, requireRo
 import { resources, users, persist, hydrate } from './store.js';
 import { seedIfEmpty } from './seed.js';
 import { fetchTable, insertRecord, fetchRecordById, insertMessage, fetchMessagesByThread, fetchMessagesByContext, supabaseAdmin } from './supabase.js';
+import { firestore, auth as firebaseAuth } from './firebase.js';
 
 hydrate();
 await seedIfEmpty();
@@ -141,6 +142,21 @@ const notifyRoles = (roles: string[], type: string, title: string, message: stri
 };
 
 const isStaff = (role: string) => role === 'admin' || role === 'company';
+
+// Serve frontend build (if present) so backend can host the entire site from a single deployment
+import fs from 'fs';
+import path from 'path';
+const frontendDist = path.resolve(__dirname, '../../dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  // For SPA client-side routing, return index.html for any non-API route
+  app.get(/^((?!\/api).)*$/, (_req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+} else {
+  console.warn('Frontend build not found at', frontendDist, '- backend will still serve API routes.');
+}
+
 
 // -------- Consultation workflow --------
 app.post('/api/consultation/requests', requireAuth, (request: AuthRequest, response) => {
