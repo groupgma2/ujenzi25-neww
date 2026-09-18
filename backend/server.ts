@@ -45,7 +45,7 @@ const rateLimiter = (windowMs = 15 * 60 * 1000, max = 20) =>
   };
 
 app.get('/api/health', (_request, response) => {
-  response.json({ status: 'ok', database: supabaseAdmin ? 'connected' : 'not-connected', timestamp: new Date().toISOString() });
+  response.json({ status: 'ok', database: (typeof firestore !== 'undefined' && firestore) ? 'firestore' : 'local-store', timestamp: new Date().toISOString() });
 });
 
 const registrationSchema = z.object({
