@@ -1,89 +1,79 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import type { NextFunction, Request, Response } from 'express';
-import { randomUUID } from 'node:crypto';
-import { findUserByEmail, users, type UserRecord, type UserRole } from './store.js';
+﻿import type { NextFunction, Request, Response } from 'express';
+import { auth as firebaseAuth } from './firebase.js';
+import { insertDoc, fetchDocById } from './firebaseHelpers.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? (() => { throw new Error('JWT_SECRET is required in production'); })() : 'development-only-secret');
+export type UserRole = 'client' | 'partner' | 'company' | 'admin';
 
-export const publicUser = (user: UserRecord) => {
-  const { passwordHash: _passwordHash, ...safeUser } = user;
+export interface UserRecord {
+  id: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  role: UserRole;
+  isVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const publicUser = (user: Partial<UserRecord>) => {
+  const { ...safeUser } = user;
   return safeUser;
 };
 
-export const createToken = (user: UserRecord) =>
-  jwt.sign({ sub: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
-
-export const createRefreshToken = (user: UserRecord) =>
-  jwt.sign({ sub: user.id, type: 'refresh' }, JWT_SECRET, { expiresIn: '7d' });
-
-export const verifyToken = (token: string): UserRecord | null => {
-  try {
-    const payload = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
-    return typeof payload.sub === 'string' ? (users.get(payload.sub) ?? null) : null;
-  } catch {
-    return null;
-  }
-};
-
-export const refreshAccessToken = (refreshToken: string) => {
-  const payload = jwt.verify(refreshToken, JWT_SECRET) as jwt.JwtPayload;
-  if (payload.type !== 'refresh') throw new Error('Invalid refresh token');
-  const user = typeof payload.sub === 'string' ? users.get(payload.sub) : undefined;
-  if (!user) throw new Error('Invalid refresh token');
-  return { token: createToken(user), refreshToken: createRefreshToken(user) };
-};
-
-export const createUser = async (input: { fullName: string; email: string; phone: string; password: string; role: UserRole }) => {
-  const email = input.email.trim().toLowerCase();
-  if (findUserByEmail(email)) {
-    throw new Error('An account with this email already exists');
-  }
+export const createUser = async (input: { fullName: string; email: string; phone?: string; password: string; role: UserRole }) => {
+  if (!firebaseAuth) throw new Error('Firebase Auth not configured');
+  const normalizedEmail = input.email.trim().toLowerCase();
+  const created = await firebaseAuth.createUser({ email: normalizedEmail, password: input.password, displayName: input.fullName, phoneNumber: input.phone });
   const now = new Date().toISOString();
-  const user: UserRecord = {
-    id: randomUUID(),
+  const userDoc = {
+    id: created.uid,
     fullName: input.fullName.trim(),
-    email,
-    phone: input.phone.trim(),
-    passwordHash: await bcrypt.hash(input.password, 12),
+    email: normalizedEmail,
+    phone: input.phone || '',
     role: input.role,
-    isVerified: true,
+    isVerified: !!created.emailVerified,
     createdAt: now,
     updatedAt: now,
   };
-  users.set(user.id, user);
-  return publicUser(user);
+  await insertDoc('users', userDoc);
+  return publicUser(userDoc);
 };
 
-export const registerUser = async (input: { fullName: string; email: string; phone: string; password: string; role?: UserRole }) => {
-  const email = input.email.trim().toLowerCase();
-  if (findUserByEmail(email)) {
-    throw new Error('An account with this email already exists');
-  }
-
+export const registerUser = async (input: { fullName: string; email: string; phone?: string; password: string; role?: UserRole }) => {
+  if (!firebaseAuth) throw new Error('Firebase Auth not configured');
+  const normalizedEmail = input.email.trim().toLowerCase();
+  const created = await firebaseAuth.createUser({ email: normalizedEmail, password: input.password, displayName: input.fullName, phoneNumber: input.phone });
   const now = new Date().toISOString();
-  const user: UserRecord = {
-    id: randomUUID(),
+  const userDoc = {
+    id: created.uid,
     fullName: input.fullName.trim(),
-    email,
-    phone: input.phone.trim(),
-    passwordHash: await bcrypt.hash(input.password, 12),
+    email: normalizedEmail,
+    phone: input.phone || '',
     role: input.role === 'partner' ? 'partner' : 'client',
-    isVerified: false,
+    isVerified: !!created.emailVerified,
     createdAt: now,
     updatedAt: now,
   };
-
-  users.set(user.id, user);
-  return { user: publicUser(user), token: createToken(user), refreshToken: createRefreshToken(user) };
+  await insertDoc('users', userDoc);
+  return { user: publicUser(userDoc) };
 };
 
 export const loginUser = async (email: string, password: string) => {
-  const user = findUserByEmail(email.trim().toLowerCase());
-  if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
-    throw new Error('Invalid email or password');
+  const apiKey = process.env.FIREBASE_API_KEY;
+  if (!apiKey) throw new Error('Server-side login requires FIREBASE_API_KEY; recommend client-side Firebase Auth');
+  const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, returnSecureToken: true }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Authentication failed: ${text}`);
   }
-  return { user: publicUser(user), token: createToken(user), refreshToken: createRefreshToken(user) };
+  const data = await res.json();
+  const userId = data.localId as string;
+  const userDoc = await fetchDocById('users', userId);
+  return { user: publicUser(userDoc), token: data.idToken, refreshToken: data.refreshToken };
 };
 
 export interface AuthRequest extends Request {
@@ -97,52 +87,27 @@ export const requireAuth = async (request: AuthRequest, response: Response, next
     response.status(401).json({ code: 'UNAUTHORIZED', message: 'Authentication required' });
     return;
   }
-
-  // Try local JWT first
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
-    const user = typeof payload.sub === 'string' ? users.get(payload.sub) : undefined;
-    if (!user) throw new Error('User not found');
-    request.user = user;
-    return next();
-  } catch {
-    // fall through to Supabase token validation below
-  }
-
-  // Try Supabase access token verification (server-side check)
-  try {
-    const supabaseUrl = process.env.VITE_SUPABASE_URL;
-    if (!supabaseUrl) throw new Error('Supabase URL not configured');
-
-    const res = await fetch(`${supabaseUrl}/auth/v1/user`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        apikey: process.env.VITE_SUPABASE_ANON_KEY ?? '',
-      },
-    });
-    if (!res.ok) throw new Error('Supabase token invalid');
-    const body = await res.json();
-    const supUser = body;
-    if (!supUser || !supUser.id) throw new Error('Supabase user not found');
-
-    // Map Supabase user to local UserRecord shape for request handling
-    const meta = (supUser.user_metadata || {}) as any;
-    const mapped: UserRecord = {
-      id: supUser.id,
-      fullName: meta.full_name || supUser.email?.split('@')[0] || 'User',
-      email: supUser.email || '',
-      phone: meta.phone || '',
-      passwordHash: '', // unknown on Supabase
-      role: (meta.role && (['client','partner','company','admin'] as string[]).includes(meta.role)) ? (meta.role as UserRole) : 'client',
-      isVerified: true,
-      createdAt: supUser.created_at || new Date().toISOString(),
-      updatedAt: supUser.updated_at || supUser.created_at || new Date().toISOString(),
-    };
-
-    // insert into local map if missing (optional, keep persistence)
-    if (!users.has(mapped.id)) users.set(mapped.id, mapped);
-
-    request.user = mapped;
+    if (!firebaseAuth) throw new Error('Firebase Auth not configured');
+    const decoded = await firebaseAuth.verifyIdToken(token);
+    const uid = decoded.uid;
+    let user = await fetchDocById('users', uid) as any;
+    if (!user) {
+      const now = new Date().toISOString();
+      const mapped = {
+        id: uid,
+        fullName: decoded.name || (decoded.email ? decoded.email.split('@')[0] : 'User'),
+        email: decoded.email || '',
+        phone: decoded.phone_number || '',
+        role: 'client' as UserRole,
+        isVerified: !!decoded.email_verified,
+        createdAt: now,
+        updatedAt: now,
+      };
+      await insertDoc('users', mapped);
+      user = mapped;
+    }
+    request.user = user as UserRecord;
     return next();
   } catch (err) {
     response.status(401).json({ code: 'UNAUTHORIZED', message: 'Invalid or expired token' });
